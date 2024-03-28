@@ -48,7 +48,7 @@
               console.log(jsonObject);
               
               // Grouping by "Taxable Value"
-              const groupedData = data.reduce((acc, obj) => {
+              const groupedData = data.reduce((acc, jsonObject) => {
                   const key = obj["Taxable Value"];
                   if (!acc[key]) {
                      acc[key] = [];

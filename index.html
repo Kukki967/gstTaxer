@@ -75,7 +75,6 @@
 
               console.log(`Taxable Value: ${key}, Total Amount of Tax: ${totalAmountOfTax}`);
             }
-
           });
 
         };
@@ -83,21 +82,20 @@
       }
     });
 
-
   function groupByTaxAmount(data) {
-      const groups = {};
-      for (const item of data) {
-        const taxAmount = parseFloat(item["__EMPTY_7"] || 0); // Ensure numerical value (default to 0)
-        if (taxAmount !== undefined && taxAmount !== 0) {
-          const formattedTaxAmount = taxAmount.toFixed(2); // Format to 2 decimal places
-          if (!groups[formattedTaxAmount]) {
-            groups[formattedTaxAmount] = [];
-          }
-          groups[formattedTaxAmount].push(item);
+    const groups = {};
+    for (const item of data) {
+      const taxAmount = item["__EMPTY_7"]; // Or adjust the key name based on your data
+      // Skip entries only if tax amount is explicitly zero
+      if (taxAmount !== undefined) {
+        if (!groups[taxAmount]) {
+          groups[taxAmount] = [];
         }
+        groups[taxAmount].push(item);
       }
-      return groups;
     }
+    return groups;
+  }
 
 </script>
 

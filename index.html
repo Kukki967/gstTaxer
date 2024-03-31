@@ -10,28 +10,26 @@
 </head>
 
 <body>
+
+  <p id="description">Select .csv or .xls file which contains your gst record and it will calcualte your tax values</p>
+
   <input type="file" id="fileUpload" accept=".xls,.xlsx,.csv" /><br />
-  <button type="button" id="uploadExcel">Convert</button>
-  <!-- <pre id="jsonData"></pre> -->
 
   <pre id="groupedDataString"></pre>
 
   <button id="copy-button">Copy Text</button>
-
-
 </body>
+
 <script>
   var selectedFile;
-  var resultList = [];
+
+  //pick file
   document
     .getElementById("fileUpload")
     .addEventListener("change", function (event) {
       selectedFile = event.target.files[0];
-    });
 
-  document
-    .getElementById("uploadExcel")
-    .addEventListener("click", function () {
+      //convert file 
       if (selectedFile) {
         console.log("hi");
         var fileReader = new FileReader();
@@ -59,6 +57,8 @@
       }
     });
 
+    
+  //copy
   const textToCopyElement = document.getElementById("groupedDataString");
   const copyButton = document.getElementById("copy-button");
 
@@ -117,7 +117,6 @@
           tax18 = totalAmountOfTax;
           break;
         default: 
-          break;
         // Handle invalid entries here (optional)
       }
 

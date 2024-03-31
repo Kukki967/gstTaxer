@@ -16,9 +16,13 @@
 
   <pre id="groupedDataString"></pre>
 
+  <button id="copy-button">Copy Text</button>
+
+
 </body>
 <script>
   var selectedFile;
+  var resultList = [];
   document
     .getElementById("fileUpload")
     .addEventListener("change", function (event) {
@@ -47,40 +51,28 @@
             const groupedData = groupByTaxAmount(rowObject);
             console.log(groupedData);
 
-            var tax5;
-            var tax0;
-            var tax12;
-            var tax15;
-            var tax18;
-
-            // Calculating Total "Amount of Tax" for each "Taxable Value"
-            for (const key in groupedData) {
-              const totalAmountOfTax = groupedData[key].reduce((total, obj) => total + obj["__EMPTY_8"], 0);
-              if (key == "0") {
-                tax0 = totalAmountOfTax
-              } else if (key == "5") {
-                tax5 = totalAmountOfTax
-              } else if (key == "12") {
-                tax12 = totalAmountOfTax
-              } else if (key == "15") {
-                tax15 = totalAmountOfTax
-              } else if (key == "18") {
-                tax18 = totalAmountOfTax
-              }
-
-              let total = tax0 + tax5 + tax12 + tax15 + tax18
-              let result = `0% = ${tax0} \n 5% = ${tax5}  \n 12% = ${tax0}  \n 15% = ${tax12}  \n 18% = ${tax15}  \n Total = ${total}  `
-
-              document.getElementById("groupedDataString").innerHTML = result;
-
-              console.log(`Taxable Value: ${key}, Total Amount of Tax: ${totalAmountOfTax}`);
-            }
+            calculateTaxSummary(groupedData)
+            
           });
-
         };
         fileReader.readAsBinaryString(selectedFile);
       }
     });
+
+  const textToCopyElement = document.getElementById("groupedDataString");
+  const copyButton = document.getElementById("copy-button");
+
+  copyButton.addEventListener("click", function () {
+    const text = textToCopyElement.textContent;
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        console.log("Text copied to clipboard successfully!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy text:", err);
+      });
+  });
+
 
   function groupByTaxAmount(data) {
     const groups = {};
@@ -95,6 +87,55 @@
       }
     }
     return groups;
+  }
+
+  function calculateTaxSummary(groupedData) {
+    let tax0 = 0;
+    let tax5 = 0;
+    let tax12 = 0;
+    let tax15 = 0;
+    let tax18 = 0;
+
+    for (const key in groupedData) {
+      const taxAmount = groupedData[key].reduce((total, obj) => total + obj["__EMPTY_8"], 0);
+      const totalAmountOfTax = twoPlacesAfterDecimal(taxAmount);
+
+      switch (key) {
+        case "0":
+          tax0 = totalAmountOfTax;
+          break;
+        case "5":
+          tax5 = totalAmountOfTax;
+          break;
+        case "12":
+          tax12 = totalAmountOfTax;
+          break;
+        case "15":
+          tax15 = totalAmountOfTax;
+          break;
+        case "18":
+          tax18 = totalAmountOfTax;
+          break;
+        default: 
+          break;
+        // Handle invalid entries here (optional)
+      }
+
+      console.log(`Taxable Value: ${key}, Total Amount of Tax: ${totalAmountOfTax}`);
+    }
+
+    let total = parseFloat(tax0) + parseFloat(tax5) + parseFloat(tax12) + parseFloat(tax15) + parseFloat(tax18);
+    const result = `0% = ${tax0} \n 5% = ${tax5} \n 12% = ${tax12} \n 15% = ${tax15} \n 18% = ${tax18} \n Total = ${total}`;
+
+    document.getElementById("groupedDataString").innerHTML = result;
+  }
+
+  function twoPlacesAfterDecimal(amount) {
+    const taxAmount = parseFloat(amount); // Convert amount to a number (float)
+    if (isNaN(taxAmount)) { // Check for conversion errors (not a number)
+      return amount; // Return original value if conversion fails
+    }
+    return taxAmount.toFixed(2); // Apply to the converted number
   }
 
 </script>
